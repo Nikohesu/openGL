@@ -2,6 +2,19 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+void keyCallback (GLFWwindow* window, int key, int scancode, int action, int mode) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){//CUANDO SE PRESIONA LA TECLA
+        std::cout << "Escape press" << std::endl;
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+    if (key == GLFW_KEY_W && action == GLFW_RELEASE) {//CUANDO SE SUELTA LA TECLA
+        std::cout << "w press" << std::endl;
+    }
+    if (key == GLFW_KEY_B && action == GLFW_REPEAT) {//SE MANTIENE PRESIONADA LA TECLA
+        std::cout << "B PRESS" << std::endl;
+    }
+}
+
 int main () {
     if (!glfwInit()) { 
         std::cout << "Failed to initialize GLFW" << std::endl;
@@ -25,8 +38,7 @@ int main () {
 
     //rederloop
     while (!glfwWindowShouldClose(window)) {
-
-
+        glfwSetKeyCallback(window, keyCallback);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

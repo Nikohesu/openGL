@@ -2,6 +2,16 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+void mousePositionCallback (GLFWwindow* window, double xpos, double ypos){
+    std::cout << "cursor en: " << xpos << ", " << ypos << std::endl;
+}
+void mouseButtonCallback (GLFWwindow* window, int button, int action, int mods){
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
+        std::cout << "boton izquierdo del mouse presionado" << std::endl;
+
+    }
+}
+
 int main () {
     if (!glfwInit()) { 
         std::cout << "Failed to initialize GLFW" << std::endl;
@@ -26,7 +36,8 @@ int main () {
     //rederloop
     while (!glfwWindowShouldClose(window)) {
 
-
+        glfwSetCursorPosCallback(window, mousePositionCallback);
+        glfwSetMouseButtonCallback(window, mouseButtonCallback);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

@@ -12,8 +12,10 @@ int main () {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//definimos el perfil de openGL como moderno
 
     GLFWwindow* window = glfwCreateWindow(600, 600, "proyect 1",NULL, NULL);
+    GLFWwindow* window2 = glfwCreateWindow(600, 400, "ventana 2", NULL, NULL);
     glfwMakeContextCurrent(window);
-    if (window == NULL){
+    glfwMakeContextCurrent(window2);
+    if (window == NULL || window2 == NULL){
         std::cout << "Failed to create GLFW window" << std::endl;glfwTerminate();
         return -1;
     }
@@ -24,10 +26,11 @@ int main () {
 }
 
     //rederloop
-    while (!glfwWindowShouldClose(window)) {
-
+    while (!glfwWindowShouldClose(window) & !glfwWindowShouldClose(window2)) {
 
         glfwSwapBuffers(window);
+        glfwSwapBuffers(window2);
+
         glfwPollEvents();
     }
     

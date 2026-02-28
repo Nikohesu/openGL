@@ -25,8 +25,6 @@ int main () {
 
     //rederloop
     while (!glfwWindowShouldClose(window)) {
-
-
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
