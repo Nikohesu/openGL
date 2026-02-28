@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "Compilar OpenGL",
+            "command": "C:\\msys64\\ucrt64\\bin\\g++.exe", // AJUSTA ESTA RUTA A TU G++
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${workspaceFolder}/src/*.cpp",      // Compila todos los .cpp en src
+                "${workspaceFolder}/src/glad.c",     // IMPORTANTE: Incluye el glad.c
+                "-o",
+                "${workspaceFolder}/main.exe",
+                "-I${workspaceFolder}/dependencies/include", // Ruta de cabeceras
+                "-L${workspaceFolder}/dependencies/lib",     // Ruta de librerías
+                "-lglfw3",       // Enlaza GLFW
+                "-lopengl32",    // Enlaza OpenGL nativo de Windows
+                "-lgdi32"        // Necesario para gráficos en Windows
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
