@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Integrador: Sistema de Estudiantes - Programación de Computadores</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --accent-cyan: #00d4ff;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --accent-orange: #ff6b35;
+            --accent-yellow: #ffd93d;
+            --accent-red: #ff4757;
+            --accent-green: #00ff88;
+            --accent-teal: #14b8a6;
+            --accent-pink: #ec4899;
+            --accent-lime: #84cc16;
+            --text-primary: #ffffff;
+            --text-secondary: #8b8b9e;
+            --border-color: #2a2a3e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1000;
+        }
+
+        .nav-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .nav-title span {
+            color: var(--accent-lime);
+            font-weight: 700;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent-lime);
+            box-shadow: 0 0 15px rgba(132, 204, 22, 0.2);
+        }
+
+        .slide-counter {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-lime);
+            font-size: 14px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-lime), var(--accent-teal));
+            transition: width 0.3s ease;
+            z-index: 999;
+        }
+
+        /* Slides container */
+        .slides-container {
+            height: 100vh;
+            padding-top: 63px;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            height: calc(100vh - 63px);
+            padding: 40px 60px;
+            overflow-y: auto;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Slide layouts */
+        .slide-title {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent-lime), var(--accent-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--accent-lime);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--accent-green);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        p.big {
+            font-size: 1.4rem;
+        }
+
+        strong {
+            color: var(--text-primary);
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: #1a1a2e;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block.small {
+            padding: 15px 20px;
+        }
+
+        .code-block::before {
+            content: 'C++';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .code-block.no-label::before {
+            content: '';
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #e0e0e0;
+        }
+
+        .code-block .keyword { color: var(--accent-purple); }
+        .code-block .function { color: var(--accent-blue); }
+        .code-block .number { color: var(--accent-orange); }
+        .code-block .string { color: var(--accent-yellow); }
+        .code-block .comment { color: #6a6a8a; font-style: italic; }
+        .code-block .type { color: var(--accent-green); }
+        .code-block .struct-name { color: var(--accent-teal); }
+        .code-block .member { color: var(--accent-cyan); }
+        .code-block .vector-type { color: var(--accent-pink); }
+        .code-block .step-marker { color: var(--accent-lime); font-weight: bold; }
+
+        /* Visual diagrams */
+        .visual-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        /* Highlight boxes */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(132, 204, 22, 0.1), rgba(20, 184, 166, 0.1));
+            border-left: 4px solid var(--accent-lime);
+            padding: 20px 25px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .highlight-box.warning {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 217, 61, 0.1));
+            border-left-color: var(--accent-orange);
+        }
+
+        .highlight-box.success {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border-left-color: var(--accent-green);
+        }
+
+        .highlight-box.error {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 107, 53, 0.1));
+            border-left-color: var(--accent-red);
+        }
+
+        .highlight-box.info {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(59, 130, 246, 0.1));
+            border-left-color: var(--accent-blue);
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .highlight-box p + p {
+            margin-top: 10px;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 20px 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul li, ol li {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent-lime);
+        }
+
+        ol {
+            padding-left: 30px;
+        }
+
+        ol li {
+            padding-left: 10px;
+        }
+
+        /* Two column layout */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Step indicator */
+        .step-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-lime), var(--accent-teal));
+            color: var(--bg-dark);
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        /* Roadmap */
+        .roadmap {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .roadmap-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .roadmap-item:hover {
+            border-color: var(--accent-lime);
+            transform: translateX(10px);
+        }
+
+        .roadmap-item.active {
+            border-color: var(--accent-lime);
+            background: rgba(132, 204, 22, 0.1);
+        }
+
+        .roadmap-item.completed {
+            border-color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .roadmap-number {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-lime);
+            color: var(--bg-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .roadmap-item.completed .roadmap-number {
+            background: var(--accent-green);
+        }
+
+        .roadmap-text {
+            flex: 1;
+        }
+
+        .roadmap-text h4 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .roadmap-text p {
+            margin: 5px 0 0 0;
+            font-size: 0.95rem;
+        }
+
+        /* Requirements list */
+        .requirements-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .requirement-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .requirement-icon {
+            font-size: 1.5rem;
+        }
+
+        .requirement-item h4 {
+            margin: 0 0 5px 0;
+            color: var(--text-primary);
+        }
+
+        .requirement-item p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        /* Terminal demo */
+        .terminal-demo {
+            background: #0d0d0d;
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .terminal-header {
+            background: #1a1a1a;
+            padding: 10px 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f56; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #27ca40; }
+
+        .terminal-body {
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: #00ff88;
+        }
+
+        .terminal-body .prompt {
+            color: #888;
+        }
+
+        .terminal-body .output {
+            color: #fff;
+        }
+
+        .terminal-body .input {
+            color: #ffd93d;
+        }
+
+        /* Typing demo */
+        .typing-demo {
+            font-family: 'JetBrains Mono', monospace;
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .typing-demo .output {
+            color: var(--text-primary);
+            margin-top: 10px;
+        }
+
+        /* Checkpoint */
+        .checkpoint-box {
+            background: linear-gradient(135deg, rgba(255, 217, 61, 0.1), rgba(255, 107, 53, 0.1));
+            border: 2px solid var(--accent-yellow);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .checkpoint-box h3 {
+            color: var(--accent-yellow);
+            margin-bottom: 15px;
+        }
+
+        /* Table */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .info-table th,
+        .info-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-table th {
+            background: var(--bg-card);
+            color: var(--accent-lime);
+            font-weight: 600;
+        }
+
+        .info-table td {
+            color: var(--text-secondary);
+        }
+
+        .info-table code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(132, 204, 22, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: var(--accent-cyan);
+        }
+
+        /* Challenge box */
+        .challenge-box {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
+            border: 2px solid var(--accent-purple);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .challenge-box h4 {
+            color: var(--accent-purple);
+            margin-bottom: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .two-columns,
+            .requirements-list {
+                grid-template-columns: 1fr;
+            }
+
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.8rem; }
+
+            .slide {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-title">Programación de Computadores · <span>PROYECTO INTEGRADOR</span></div>
+        <div class="nav-controls">
+            <button class="nav-btn" onclick="prevSlide()">← Anterior</button>
+            <span class="slide-counter"><span id="current">1</span> / <span id="total">20</span></span>
+            <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+        </div>
+    </nav>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progress"></div>
+
+    <!-- Slides -->
+    <div class="slides-container">
+        
+        <!-- Slide 1: Título -->
+        <div class="slide active" id="slide-1">
+            <div class="slide-title">
+                <h1>🎯 Proyecto Integrador</h1>
+                <p class="subtitle">Sistema de Gestión de Estudiantes</p>
+                <p style="color: var(--accent-lime); font-family: 'JetBrains Mono', monospace;">
+                    Programación de Computadores · Universidad Nacional de Colombia
+                </p>
+                <div style="margin-top: 40px; color: var(--text-secondary);">
+                    <p>Integrando: Structs + Vectores + Archivos + Funciones</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: ¿Qué construiremos? -->
+        <div class="slide" id="slide-2">
+            <div class="slide-content">
+                <h2>🏗️ ¿Qué construiremos hoy?</h2>
+                
+                <p class="big">Un <strong>sistema completo</strong> de gestión de estudiantes que integra todo lo aprendido esta semana.</p>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="visual-box">
+                            <h3 style="color: var(--accent-lime);">🎯 El sistema permite:</h3>
+                            <ul>
+                                <li>Registrar nuevos estudiantes</li>
+                                <li>Ver todos los estudiantes</li>
+                                <li>Buscar por código</li>
+                                <li><strong>Guardar datos</strong> al cerrar</li>
+                                <li><strong>Recuperar datos</strong> al abrir</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="visual-box">
+                            <h3 style="color: var(--accent-teal);">🧩 Conceptos que integramos:</h3>
+                            <ul>
+                                <li><code>struct</code> - Estructura de datos</li>
+                                <li><code>vector</code> - Almacenamiento dinámico</li>
+                                <li>Funciones - Modularización</li>
+                                <li>Archivos CSV - Persistencia</li>
+                                <li>Menú interactivo - UX</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box success">
+                    <p>✨ <strong>Al finalizar:</strong> Tendrás un programa funcional que podrías usar en la vida real.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Requerimientos -->
+        <div class="slide" id="slide-3">
+            <div class="slide-content">
+                <h2>📋 Requerimientos del Sistema</h2>
+                
+                <p class="big">El sistema debe cumplir con las siguientes funcionalidades:</p>
+
+                <div class="requirements-list">
+                    <div class="requirement-item">
+                        <span class="requirement-icon">➕</span>
+                        <div>
+                            <h4>Registrar estudiantes</h4>
+                            <p>Capturar nombre, código y promedio</p>
+                        </div>
+                    </div>
+
+                    <div class="requirement-item">
+                        <span class="requirement-icon">📋</span>
+                        <div>
+                            <h4>Listar estudiantes</h4>
+                            <p>Mostrar todos los registrados</p>
+                        </div>
+                    </div>
+
+                    <div class="requirement-item">
+                        <span class="requirement-icon">🔍</span>
+                        <div>
+                            <h4>Buscar por código</h4>
+                            <p>Encontrar un estudiante específico</p>
+                        </div>
+                    </div>
+
+                    <div class="requirement-item">
+                        <span class="requirement-icon">💾</span>
+                        <div>
+                            <h4>Guardar en archivo</h4>
+                            <p>Persistir datos en CSV al salir</p>
+                        </div>
+                    </div>
+
+                    <div class="requirement-item">
+                        <span class="requirement-icon">📂</span>
+                        <div>
+                            <h4>Cargar desde archivo</h4>
+                            <p>Recuperar datos CSV al iniciar</p>
+                        </div>
+                    </div>
+
+                    <div class="requirement-item">
+                        <span class="requirement-icon">🖥️</span>
+                        <div>
+                            <h4>Menú interactivo</h4>
+                            <p>Interfaz amigable con opciones</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Demo del producto final -->
+        <div class="slide" id="slide-4">
+            <div class="slide-content">
+                <h2>🎬 Demostración del producto final</h2>
+                
+                <p>Así se verá nuestro sistema funcionando:</p>
+
+                <div class="terminal-demo">
+                    <div class="terminal-header">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                    </div>
+                    <div class="terminal-body">
+                        <span class="output">Cargados 3 estudiantes desde archivo.</span><br><br>
+                        <span class="output">=== SISTEMA DE ESTUDIANTES ===</span><br>
+                        <span class="output">1. Agregar estudiante</span><br>
+                        <span class="output">2. Listar estudiantes (3 registrados)</span><br>
+                        <span class="output">3. Buscar por código</span><br>
+                        <span class="output">4. Guardar y salir</span><br>
+                        <span class="output">Opción: </span><span class="input">2</span><br><br>
+                        <span class="output">--- Lista de Estudiantes ---</span><br>
+                        <span class="output">1. Ana Garcia (Código: 1234567, Promedio: 4.5)</span><br>
+                        <span class="output">2. Carlos Lopez (Código: 7654321, Promedio: 3.8)</span><br>
+                        <span class="output">3. Maria Torres (Código: 9876543, Promedio: 4.2)</span><br>
+                    </div>
+                </div>
+
+                <div class="highlight-box info">
+                    <p>💡 <strong>Persistencia:</strong> Si cierras y vuelves a abrir el programa, ¡los datos siguen ahí!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Plan de construcción -->
+        <div class="slide" id="slide-5">
+            <div class="slide-content">
+                <h2>🗺️ Plan de construcción: 6 pasos</h2>
+                
+                <div class="roadmap">
+                    <div class="roadmap-item">
+                        <div class="roadmap-number">1</div>
+                        <div class="roadmap-text">
+                            <h4>Definir el struct Estudiante</h4>
+                            <p>Estructura base con nombre, código y promedio</p>
+                        </div>
+                    </div>
+
+                    <div class="roadmap-item">
+                        <div class="roadmap-number">2</div>
+                        <div class="roadmap-text">
+                            <h4>Crear funciones auxiliares</h4>
+                            <p>crearEstudiante(), mostrarEstudiante(), buscarPorCodigo()</p>
+                        </div>
+                    </div>
+
+                    <div class="roadmap-item">
+                        <div class="roadmap-number">3</div>
+                        <div class="roadmap-text">
+                            <h4>Implementar vector de estudiantes</h4>
+                            <p>Almacenamiento dinámico en el main</p>
+                        </div>
+                    </div>
+
+                    <div class="roadmap-item">
+                        <div class="roadmap-number">4</div>
+                        <div class="roadmap-text">
+                            <h4>Crear menú interactivo</h4>
+                            <p>Switch con opciones agregar, listar, buscar</p>
+                        </div>
+                    </div>
+
+                    <div class="roadmap-item">
+                        <div class="roadmap-number">5</div>
+                        <div class="roadmap-text">
+                            <h4>Agregar funciones de archivo</h4>
+                            <p>guardarEnArchivo() y cargarDesdeArchivo()</p>
+                        </div>
+                    </div>
+
+                    <div class="roadmap-item">
+                        <div class="roadmap-number">6</div>
+                        <div class="roadmap-text">
+                            <h4>Integrar persistencia</h4>
+                            <p>Cargar al inicio, guardar al salir</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Paso 1 - Struct -->
+        <div class="slide" id="slide-6">
+            <div class="slide-content">
+                <div class="step-badge">Paso 1 de 6</div>
+                <h2>📦 Definir el struct Estudiante</h2>
+                
+                <p class="big">Empezamos definiendo la estructura de datos que representa a un estudiante.</p>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="code-block">
+                            <pre><code><span class="keyword">#include</span> <span class="string">&lt;iostream&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;vector&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;fstream&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;string&gt;</span>
+
+<span class="keyword">using namespace</span> std;
+
+<span class="comment">// Definición del struct</span>
+<span class="keyword">struct</span> <span class="struct-name">Estudiante</span> {
+    <span class="type">string</span> <span class="member">nombre</span>;
+    <span class="type">int</span> <span class="member">codigo</span>;
+    <span class="type">float</span> <span class="member">promedio</span>;
+};</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>Campos del struct:</h4>
+                        <table class="info-table">
+                            <tr>
+                                <td><code>nombre</code></td>
+                                <td>Nombre completo (string)</td>
+                            </tr>
+                            <tr>
+                                <td><code>codigo</code></td>
+                                <td>Código único (int)</td>
+                            </tr>
+                            <tr>
+                                <td><code>promedio</code></td>
+                                <td>Promedio académico (float)</td>
+                            </tr>
+                        </table>
+
+                        <div class="highlight-box success">
+                            <p>✅ <strong>Paso 1 completado:</strong> Ya tenemos la estructura de datos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Paso 2 - crearEstudiante -->
+        <div class="slide" id="slide-7">
+            <div class="slide-content">
+                <div class="step-badge">Paso 2 de 6</div>
+                <h2>⌨️ Función crearEstudiante()</h2>
+                
+                <p class="big">Función que pide datos al usuario y retorna un struct completo.</p>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="code-block" style="font-size: 0.9rem;">
+                            <pre><code><span class="comment">// Función para crear un estudiante desde teclado</span>
+<span class="struct-name">Estudiante</span> <span class="function">crearEstudiante</span>() {
+    <span class="struct-name">Estudiante</span> nuevo;
+
+    cout &lt;&lt; <span class="string">"Nombre: "</span>;
+    <span class="function">getline</span>(cin, nuevo.<span class="member">nombre</span>);
+
+    cout &lt;&lt; <span class="string">"Código: "</span>;
+    cin &gt;&gt; nuevo.<span class="member">codigo</span>;
+
+    cout &lt;&lt; <span class="string">"Promedio: "</span>;
+    cin &gt;&gt; nuevo.<span class="member">promedio</span>;
+
+    cin.<span class="function">ignore</span>();  <span class="comment">// Limpiar buffer</span>
+
+    <span class="keyword">return</span> nuevo;
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>¿Qué hace esta función?</h4>
+                        <ol>
+                            <li>Crea un struct vacío</li>
+                            <li>Pide el nombre (con getline)</li>
+                            <li>Pide el código (con cin)</li>
+                            <li>Pide el promedio (con cin)</li>
+                            <li>Limpia el buffer</li>
+                            <li><strong>Retorna</strong> el struct lleno</li>
+                        </ol>
+
+                        <div class="highlight-box info">
+                            <p>💡 <strong>cin.ignore():</strong> Necesario después de <code>cin &gt;&gt;</code> si luego usaremos <code>getline()</code>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Paso 2 - mostrarEstudiante -->
+        <div class="slide" id="slide-8">
+            <div class="slide-content">
+                <div class="step-badge">Paso 2 de 6</div>
+                <h2>🖨️ Función mostrarEstudiante()</h2>
+                
+                <p class="big">Función que muestra un estudiante de forma formateada.</p>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="code-block">
+                            <pre><code><span class="comment">// Función para mostrar un estudiante</span>
+<span class="type">void</span> <span class="function">mostrarEstudiante</span>(<span class="struct-name">Estudiante</span> est) {
+    cout &lt;&lt; est.<span class="member">nombre</span> 
+         &lt;&lt; <span class="string">" (Código: "</span> &lt;&lt; est.<span class="member">codigo</span> 
+         &lt;&lt; <span class="string">", Promedio: "</span> &lt;&lt; est.<span class="member">promedio</span> 
+         &lt;&lt; <span class="string">")"</span> &lt;&lt; endl;
+}</code></pre>
+                        </div>
+
+                        <h4>Uso:</h4>
+                        <div class="code-block small no-label">
+                            <pre><code><span class="struct-name">Estudiante</span> ana = {<span class="string">"Ana Garcia"</span>, <span class="number">123</span>, <span class="number">4.5</span>};
+<span class="function">mostrarEstudiante</span>(ana);
+<span class="comment">// Ana Garcia (Código: 123, Promedio: 4.5)</span></code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>Salida formateada:</h4>
+                        <div class="typing-demo">
+                            <div class="output">
+                                Ana Garcia (Código: 1234567, Promedio: 4.5)
+                            </div>
+                        </div>
+
+                        <div class="highlight-box success">
+                            <p>✨ <strong>Ventaja:</strong> Al tener una función, siempre mostramos los estudiantes de la misma forma consistente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Paso 2 - buscarPorCodigo -->
+        <div class="slide" id="slide-9">
+            <div class="slide-content">
+                <div class="step-badge">Paso 2 de 6</div>
+                <h2>🔍 Función buscarPorCodigo()</h2>
+                
+                <p class="big">Busca un estudiante en el vector y retorna su posición (o -1 si no existe).</p>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="code-block" style="font-size: 0.9rem;">
+                            <pre><code><span class="comment">// Busca por código, retorna índice o -1</span>
+<span class="type">int</span> <span class="function">buscarPorCodigo</span>(<span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; &amp;lista, <span class="type">int</span> codigo) {
+    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; lista.<span class="function">size</span>(); i++) {
+        <span class="keyword">if</span> (lista[i].<span class="member">codigo</span> == codigo) {
+            <span class="keyword">return</span> i;  <span class="comment">// Encontrado!</span>
+        }
+    }
+    <span class="keyword">return</span> <span class="number">-1</span>;  <span class="comment">// No encontrado</span>
+}</code></pre>
+                        </div>
+
+                        <h4>Uso:</h4>
+                        <div class="code-block small no-label">
+                            <pre><code><span class="type">int</span> pos = <span class="function">buscarPorCodigo</span>(lista, <span class="number">1234567</span>);
+<span class="keyword">if</span> (pos != <span class="number">-1</span>) {
+    <span class="function">mostrarEstudiante</span>(lista[pos]);
+} <span class="keyword">else</span> {
+    cout &lt;&lt; <span class="string">"No encontrado"</span>;
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>¿Por qué retorna int?</h4>
+                        <table class="info-table">
+                            <tr>
+                                <td><code>0, 1, 2...</code></td>
+                                <td>Posición donde está</td>
+                            </tr>
+                            <tr>
+                                <td><code>-1</code></td>
+                                <td>No se encontró</td>
+                            </tr>
+                        </table>
+
+                        <div class="highlight-box warning">
+                            <p>⚠️ <strong>Nota:</strong> Usamos <code>&amp;lista</code> (referencia) para no copiar todo el vector.</p>
+                        </div>
+
+                        <div class="highlight-box success">
+                            <p>✅ <strong>Paso 2 completado:</strong> Ya tenemos las 3 funciones auxiliares.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Paso 3 - Vector -->
+        <div class="slide" id="slide-10">
+            <div class="slide-content">
+                <div class="step-badge">Paso 3 de 6</div>
+                <h2>📦 Implementar vector de estudiantes</h2>
+                
+                <p class="big">Declaramos el vector en el main y probamos las funciones.</p>
+
+                <div class="code-block">
+                    <pre><code><span class="type">int</span> <span class="function">main</span>() {
+    <span class="comment">// Vector para almacenar estudiantes</span>
+    <span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; estudiantes;
+
+    <span class="comment">// Probar las funciones</span>
+    cout &lt;&lt; <span class="string">"=== Probando funciones ==="</span> &lt;&lt; endl;
+
+    <span class="comment">// Crear y agregar un estudiante</span>
+    <span class="struct-name">Estudiante</span> nuevo = <span class="function">crearEstudiante</span>();
+    estudiantes.<span class="function">push_back</span>(nuevo);
+
+    <span class="comment">// Mostrar</span>
+    cout &lt;&lt; <span class="string">"Agregado: "</span>;
+    <span class="function">mostrarEstudiante</span>(estudiantes[<span class="number">0</span>]);
+
+    <span class="comment">// Buscar</span>
+    <span class="type">int</span> pos = <span class="function">buscarPorCodigo</span>(estudiantes, nuevo.<span class="member">codigo</span>);
+    cout &lt;&lt; <span class="string">"Encontrado en posición: "</span> &lt;&lt; pos &lt;&lt; endl;
+
+    <span class="keyword">return</span> <span class="number">0</span>;
+}</code></pre>
+                </div>
+
+                <div class="highlight-box success">
+                    <p>✅ <strong>Paso 3 completado:</strong> Vector funcionando con las funciones auxiliares.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Paso 4 - Menú estructura -->
+        <div class="slide" id="slide-11">
+            <div class="slide-content">
+                <div class="step-badge">Paso 4 de 6</div>
+                <h2>📜 Crear el menú - Estructura switch</h2>
+                
+                <p class="big">Esqueleto del menú interactivo con do-while y switch.</p>
+
+                <div class="code-block" style="font-size: 0.85rem;">
+                    <pre><code><span class="type">int</span> <span class="function">main</span>() {
+    <span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; estudiantes;
+    <span class="type">int</span> opcion;
+
+    <span class="keyword">do</span> {
+        cout &lt;&lt; <span class="string">"\n=== SISTEMA DE ESTUDIANTES ==="</span> &lt;&lt; endl;
+        cout &lt;&lt; <span class="string">"1. Agregar estudiante"</span> &lt;&lt; endl;
+        cout &lt;&lt; <span class="string">"2. Listar estudiantes ("</span> &lt;&lt; estudiantes.<span class="function">size</span>() &lt;&lt; <span class="string">" registrados)"</span> &lt;&lt; endl;
+        cout &lt;&lt; <span class="string">"3. Buscar por código"</span> &lt;&lt; endl;
+        cout &lt;&lt; <span class="string">"4. Guardar y salir"</span> &lt;&lt; endl;
+        cout &lt;&lt; <span class="string">"Opción: "</span>;
+        cin &gt;&gt; opcion;
+        cin.<span class="function">ignore</span>();
+
+        <span class="keyword">switch</span> (opcion) {
+            <span class="keyword">case</span> <span class="number">1</span>:
+                <span class="comment">// Agregar</span>
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="number">2</span>:
+                <span class="comment">// Listar</span>
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="number">3</span>:
+                <span class="comment">// Buscar</span>
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="number">4</span>:
+                cout &lt;&lt; <span class="string">"¡Hasta luego!"</span> &lt;&lt; endl;
+                <span class="keyword">break</span>;
+        }
+    } <span class="keyword">while</span> (opcion != <span class="number">4</span>);
+
+    <span class="keyword">return</span> <span class="number">0</span>;
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Paso 4 - Opción Agregar -->
+        <div class="slide" id="slide-12">
+            <div class="slide-content">
+                <div class="step-badge">Paso 4 de 6</div>
+                <h2>➕ Menú - Opción Agregar</h2>
+                
+                <p class="big">Integramos la función crearEstudiante() con push_back().</p>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="code-block">
+                            <pre><code><span class="keyword">case</span> <span class="number">1</span>: {
+    cout &lt;&lt; <span class="string">"--- Agregar Estudiante ---"</span> &lt;&lt; endl;
+    
+    <span class="comment">// Crear estudiante con la función</span>
+    <span class="struct-name">Estudiante</span> nuevo = <span class="function">crearEstudiante</span>();
+    
+    <span class="comment">// Agregar al vector</span>
+    estudiantes.<span class="function">push_back</span>(nuevo);
+    
+    cout &lt;&lt; <span class="string">"Estudiante agregado!"</span> &lt;&lt; endl;
+    <span class="keyword">break</span>;
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>Flujo:</h4>
+                        <ol>
+                            <li>Usuario elige opción 1</li>
+                            <li><code>crearEstudiante()</code> pide datos</li>
+                            <li><code>push_back()</code> agrega al vector</li>
+                            <li>Mensaje de confirmación</li>
+                        </ol>
+
+                        <div class="highlight-box info">
+                            <p>💡 <strong>Nota:</strong> Las llaves <code>{ }</code> en el case permiten declarar variables locales.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Paso 4 - Opción Listar -->
+        <div class="slide" id="slide-13">
+            <div class="slide-content">
+                <div class="step-badge">Paso 4 de 6</div>
+                <h2>📋 Menú - Opción Listar</h2>
+                
+                <p class="big">Recorremos el vector y mostramos cada estudiante.</p>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="code-block">
+                            <pre><code><span class="keyword">case</span> <span class="number">2</span>:
+    cout &lt;&lt; <span class="string">"--- Lista de Estudiantes ---"</span> &lt;&lt; endl;
+    
+    <span class="keyword">if</span> (estudiantes.<span class="function">empty</span>()) {
+        cout &lt;&lt; <span class="string">"No hay estudiantes."</span> &lt;&lt; endl;
+    } <span class="keyword">else</span> {
+        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; estudiantes.<span class="function">size</span>(); i++) {
+            cout &lt;&lt; i + <span class="number">1</span> &lt;&lt; <span class="string">". "</span>;
+            <span class="function">mostrarEstudiante</span>(estudiantes[i]);
+        }
+    }
+    <span class="keyword">break</span>;</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>Salida:</h4>
+                        <div class="typing-demo">
+                            <div class="output">
+                                --- Lista de Estudiantes ---<br>
+                                1. Ana Garcia (Código: 1234567, Promedio: 4.5)<br>
+                                2. Carlos Lopez (Código: 7654321, Promedio: 3.8)
+                            </div>
+                        </div>
+
+                        <div class="highlight-box success">
+                            <p>✨ Usamos <code>empty()</code> para verificar si hay datos antes de listar.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Paso 4 - Opción Buscar -->
+        <div class="slide" id="slide-14">
+            <div class="slide-content">
+                <div class="step-badge">Paso 4 de 6</div>
+                <h2>🔍 Menú - Opción Buscar</h2>
+                
+                <p class="big">Pedimos el código y usamos la función buscarPorCodigo().</p>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="code-block">
+                            <pre><code><span class="keyword">case</span> <span class="number">3</span>: {
+    cout &lt;&lt; <span class="string">"--- Buscar Estudiante ---"</span> &lt;&lt; endl;
+    
+    <span class="type">int</span> codigoBuscar;
+    cout &lt;&lt; <span class="string">"Ingrese código: "</span>;
+    cin &gt;&gt; codigoBuscar;
+    
+    <span class="type">int</span> pos = <span class="function">buscarPorCodigo</span>(estudiantes, codigoBuscar);
+    
+    <span class="keyword">if</span> (pos != <span class="number">-1</span>) {
+        cout &lt;&lt; <span class="string">"Encontrado: "</span>;
+        <span class="function">mostrarEstudiante</span>(estudiantes[pos]);
+    } <span class="keyword">else</span> {
+        cout &lt;&lt; <span class="string">"No se encontró."</span> &lt;&lt; endl;
+    }
+    <span class="keyword">break</span>;
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>Flujo:</h4>
+                        <ol>
+                            <li>Pedir código a buscar</li>
+                            <li>Llamar a <code>buscarPorCodigo()</code></li>
+                            <li>Si retorna != -1: mostrar</li>
+                            <li>Si retorna -1: no encontrado</li>
+                        </ol>
+
+                        <div class="highlight-box success">
+                            <p>✅ <strong>Paso 4 completado:</strong> Menú funcional con las 3 opciones principales.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Checkpoint -->
+        <div class="slide" id="slide-15">
+            <div class="slide-content">
+                <h2>🏁 Checkpoint: Probar el sistema</h2>
+                
+                <div class="checkpoint-box">
+                    <h3>⏸️ Momento de probar</h3>
+                    <p style="font-size: 1.2rem; color: var(--text-secondary);">
+                        El sistema ya funciona para agregar, listar y buscar.<br>
+                        <strong>Pero...</strong> si cierras el programa, ¡los datos se pierden!
+                    </p>
+                </div>
+
+                <div class="two-columns">
+                    <div>
+                        <h4 style="color: var(--accent-green);">✅ Lo que ya funciona:</h4>
+                        <ul>
+                            <li>Struct Estudiante definido</li>
+                            <li>Funciones auxiliares</li>
+                            <li>Vector de estudiantes</li>
+                            <li>Menú interactivo</li>
+                            <li>Agregar, listar, buscar</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 style="color: var(--accent-orange);">⏳ Lo que falta:</h4>
+                        <ul>
+                            <li>Guardar en archivo CSV</li>
+                            <li>Cargar desde archivo CSV</li>
+                            <li>Integrar persistencia</li>
+                        </ul>
+
+                        <div class="highlight-box warning">
+                            <p>🎯 <strong>Siguiente:</strong> Agregar persistencia con archivos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Paso 5 - guardarEnArchivo -->
+        <div class="slide" id="slide-16">
+            <div class="slide-content">
+                <div class="step-badge">Paso 5 de 6</div>
+                <h2>💾 Función guardarEnArchivo()</h2>
+                
+                <p class="big">Guarda todo el vector en un archivo CSV.</p>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="code-block" style="font-size: 0.85rem;">
+                            <pre><code><span class="comment">// Guarda el vector en archivo CSV</span>
+<span class="type">void</span> <span class="function">guardarEnArchivo</span>(<span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; &amp;lista, <span class="type">string</span> archivo) {
+    <span class="type">ofstream</span> f(archivo);
+
+    <span class="keyword">if</span> (f.<span class="function">is_open</span>()) {
+        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; lista.<span class="function">size</span>(); i++) {
+            f &lt;&lt; lista[i].<span class="member">nombre</span> &lt;&lt; <span class="string">","</span>
+              &lt;&lt; lista[i].<span class="member">codigo</span> &lt;&lt; <span class="string">","</span>
+              &lt;&lt; lista[i].<span class="member">promedio</span> &lt;&lt; endl;
+        }
+        f.<span class="function">close</span>();
+        cout &lt;&lt; <span class="string">"Guardados "</span> &lt;&lt; lista.<span class="function">size</span>() 
+             &lt;&lt; <span class="string">" estudiantes."</span> &lt;&lt; endl;
+    } <span class="keyword">else</span> {
+        cout &lt;&lt; <span class="string">"Error al guardar."</span> &lt;&lt; endl;
+    }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>Archivo generado:</h4>
+                        <div class="visual-box" style="background: #1a1a2e; border-color: var(--accent-yellow);">
+                            <p style="color: var(--accent-yellow); margin-bottom: 10px;">📄 estudiantes.csv</p>
+                            <code style="color: var(--text-primary);">
+                                Ana Garcia,1234567,4.5<br>
+                                Carlos Lopez,7654321,3.8<br>
+                                Maria Torres,9876543,4.2
+                            </code>
+                        </div>
+
+                        <div class="highlight-box info">
+                            <p>💡 Cada estudiante = una línea CSV.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Paso 5 - cargarDesdeArchivo -->
+        <div class="slide" id="slide-17">
+            <div class="slide-content">
+                <div class="step-badge">Paso 5 de 6</div>
+                <h2>📂 Función cargarDesdeArchivo()</h2>
+                
+                <p class="big">Lee el archivo CSV y llena el vector.</p>
+
+                <div class="code-block" style="font-size: 0.8rem;">
+                    <pre><code><span class="comment">// Carga estudiantes desde archivo CSV</span>
+<span class="type">void</span> <span class="function">cargarDesdeArchivo</span>(<span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; &amp;lista, <span class="type">string</span> archivo) {
+    <span class="type">ifstream</span> f(archivo);
+    <span class="type">string</span> linea;
+
+    <span class="keyword">if</span> (f.<span class="function">is_open</span>()) {
+        <span class="keyword">while</span> (<span class="function">getline</span>(f, linea)) {
+            <span class="struct-name">Estudiante</span> est;
+            
+            <span class="comment">// Encontrar posiciones de las comas</span>
+            <span class="type">int</span> pos1 = linea.<span class="function">find</span>(<span class="string">','</span>);
+            <span class="type">int</span> pos2 = linea.<span class="function">find</span>(<span class="string">','</span>, pos1 + <span class="number">1</span>);
+
+            <span class="comment">// Extraer campos</span>
+            est.<span class="member">nombre</span> = linea.<span class="function">substr</span>(<span class="number">0</span>, pos1);
+            est.<span class="member">codigo</span> = <span class="function">stoi</span>(linea.<span class="function">substr</span>(pos1 + <span class="number">1</span>, pos2 - pos1 - <span class="number">1</span>));
+            est.<span class="member">promedio</span> = <span class="function">stof</span>(linea.<span class="function">substr</span>(pos2 + <span class="number">1</span>));
+
+            lista.<span class="function">push_back</span>(est);
+        }
+        f.<span class="function">close</span>();
+        cout &lt;&lt; <span class="string">"Cargados "</span> &lt;&lt; lista.<span class="function">size</span>() &lt;&lt; <span class="string">" estudiantes."</span> &lt;&lt; endl;
+    }
+    <span class="comment">// Si no existe el archivo, simplemente no carga nada (lista vacía)</span>
+}</code></pre>
+                </div>
+
+                <div class="highlight-box success">
+                    <p>✅ <strong>Paso 5 completado:</strong> Funciones de persistencia listas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Paso 6 - Integrar persistencia -->
+        <div class="slide" id="slide-18">
+            <div class="slide-content">
+                <div class="step-badge">Paso 6 de 6</div>
+                <h2>🔗 Integrar persistencia al sistema</h2>
+                
+                <p class="big">Cargar al inicio del programa, guardar al salir.</p>
+
+                <div class="two-columns">
+                    <div>
+                        <h4>Al inicio del main:</h4>
+                        <div class="code-block small">
+                            <pre><code><span class="type">int</span> <span class="function">main</span>() {
+    <span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; estudiantes;
+    <span class="type">string</span> archivo = <span class="string">"estudiantes.csv"</span>;
+    
+    <span class="comment">// ⭐ CARGAR AL INICIO</span>
+    <span class="function">cargarDesdeArchivo</span>(estudiantes, archivo);
+    
+    <span class="type">int</span> opcion;
+    <span class="keyword">do</span> {
+        <span class="comment">// ... menú ...</span>
+    } <span class="keyword">while</span> (opcion != <span class="number">4</span>);</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>Al salir (case 4):</h4>
+                        <div class="code-block small">
+                            <pre><code><span class="keyword">case</span> <span class="number">4</span>:
+    <span class="comment">// ⭐ GUARDAR AL SALIR</span>
+    <span class="function">guardarEnArchivo</span>(estudiantes, archivo);
+    cout &lt;&lt; <span class="string">"¡Hasta luego!"</span> &lt;&lt; endl;
+    <span class="keyword">break</span>;</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box success">
+                    <p>✅ <strong>¡Paso 6 completado!</strong> El sistema ahora tiene persistencia completa.</p>
+                </div>
+
+                <div class="highlight-box info">
+                    <p>🔄 <strong>Ciclo de vida:</strong> Abre programa → Carga datos → Usuario trabaja → Cierra → Guarda datos → Próxima vez los recupera.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Código completo -->
+        <div class="slide" id="slide-19">
+            <div class="slide-content">
+                <h2>📄 Código completo final</h2>
+                
+                <div class="code-block" style="font-size: 0.55rem; max-height: 70vh; overflow-y: auto;">
+                    <pre><code><span class="keyword">#include</span> <span class="string">&lt;iostream&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;vector&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;fstream&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;string&gt;</span>
+<span class="keyword">using namespace</span> std;
+
+<span class="keyword">struct</span> <span class="struct-name">Estudiante</span> { <span class="type">string</span> <span class="member">nombre</span>; <span class="type">int</span> <span class="member">codigo</span>; <span class="type">float</span> <span class="member">promedio</span>; };
+
+<span class="struct-name">Estudiante</span> <span class="function">crearEstudiante</span>() {
+    <span class="struct-name">Estudiante</span> nuevo;
+    cout &lt;&lt; <span class="string">"Nombre: "</span>; <span class="function">getline</span>(cin, nuevo.<span class="member">nombre</span>);
+    cout &lt;&lt; <span class="string">"Código: "</span>; cin &gt;&gt; nuevo.<span class="member">codigo</span>;
+    cout &lt;&lt; <span class="string">"Promedio: "</span>; cin &gt;&gt; nuevo.<span class="member">promedio</span>; cin.<span class="function">ignore</span>();
+    <span class="keyword">return</span> nuevo;
+}
+
+<span class="type">void</span> <span class="function">mostrarEstudiante</span>(<span class="struct-name">Estudiante</span> est) {
+    cout &lt;&lt; est.<span class="member">nombre</span> &lt;&lt; <span class="string">" (Código: "</span> &lt;&lt; est.<span class="member">codigo</span> &lt;&lt; <span class="string">", Promedio: "</span> &lt;&lt; est.<span class="member">promedio</span> &lt;&lt; <span class="string">")"</span> &lt;&lt; endl;
+}
+
+<span class="type">int</span> <span class="function">buscarPorCodigo</span>(<span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; &amp;lista, <span class="type">int</span> codigo) {
+    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; lista.<span class="function">size</span>(); i++) <span class="keyword">if</span> (lista[i].<span class="member">codigo</span> == codigo) <span class="keyword">return</span> i;
+    <span class="keyword">return</span> <span class="number">-1</span>;
+}
+
+<span class="type">void</span> <span class="function">guardarEnArchivo</span>(<span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; &amp;lista, <span class="type">string</span> archivo) {
+    <span class="type">ofstream</span> f(archivo);
+    <span class="keyword">if</span> (f.<span class="function">is_open</span>()) {
+        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; lista.<span class="function">size</span>(); i++)
+            f &lt;&lt; lista[i].<span class="member">nombre</span> &lt;&lt; <span class="string">","</span> &lt;&lt; lista[i].<span class="member">codigo</span> &lt;&lt; <span class="string">","</span> &lt;&lt; lista[i].<span class="member">promedio</span> &lt;&lt; endl;
+        f.<span class="function">close</span>(); cout &lt;&lt; <span class="string">"Guardados "</span> &lt;&lt; lista.<span class="function">size</span>() &lt;&lt; <span class="string">" estudiantes."</span> &lt;&lt; endl;
+    }
+}
+
+<span class="type">void</span> <span class="function">cargarDesdeArchivo</span>(<span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; &amp;lista, <span class="type">string</span> archivo) {
+    <span class="type">ifstream</span> f(archivo); <span class="type">string</span> linea;
+    <span class="keyword">if</span> (f.<span class="function">is_open</span>()) {
+        <span class="keyword">while</span> (<span class="function">getline</span>(f, linea)) {
+            <span class="struct-name">Estudiante</span> est;
+            <span class="type">int</span> p1 = linea.<span class="function">find</span>(<span class="string">','</span>), p2 = linea.<span class="function">find</span>(<span class="string">','</span>, p1+<span class="number">1</span>);
+            est.<span class="member">nombre</span> = linea.<span class="function">substr</span>(<span class="number">0</span>, p1);
+            est.<span class="member">codigo</span> = <span class="function">stoi</span>(linea.<span class="function">substr</span>(p1+<span class="number">1</span>, p2-p1-<span class="number">1</span>));
+            est.<span class="member">promedio</span> = <span class="function">stof</span>(linea.<span class="function">substr</span>(p2+<span class="number">1</span>));
+            lista.<span class="function">push_back</span>(est);
+        }
+        f.<span class="function">close</span>(); cout &lt;&lt; <span class="string">"Cargados "</span> &lt;&lt; lista.<span class="function">size</span>() &lt;&lt; <span class="string">" estudiantes."</span> &lt;&lt; endl;
+    }
+}
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="vector-type">vector</span>&lt;<span class="struct-name">Estudiante</span>&gt; estudiantes;
+    <span class="type">string</span> archivo = <span class="string">"estudiantes.csv"</span>;
+    <span class="function">cargarDesdeArchivo</span>(estudiantes, archivo);
+    <span class="type">int</span> opcion;
+    <span class="keyword">do</span> {
+        cout &lt;&lt; <span class="string">"\n=== SISTEMA DE ESTUDIANTES ===\n1. Agregar\n2. Listar ("</span> &lt;&lt; estudiantes.<span class="function">size</span>() &lt;&lt; <span class="string">")\n3. Buscar\n4. Guardar y salir\nOpción: "</span>;
+        cin &gt;&gt; opcion; cin.<span class="function">ignore</span>();
+        <span class="keyword">switch</span> (opcion) {
+            <span class="keyword">case</span> <span class="number">1</span>: { estudiantes.<span class="function">push_back</span>(<span class="function">crearEstudiante</span>()); cout &lt;&lt; <span class="string">"Agregado!"</span> &lt;&lt; endl; <span class="keyword">break</span>; }
+            <span class="keyword">case</span> <span class="number">2</span>: <span class="keyword">if</span> (estudiantes.<span class="function">empty</span>()) cout &lt;&lt; <span class="string">"Vacío."</span> &lt;&lt; endl;
+                    <span class="keyword">else</span> <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;estudiantes.<span class="function">size</span>(); i++) { cout &lt;&lt; i+<span class="number">1</span> &lt;&lt; <span class="string">". "</span>; <span class="function">mostrarEstudiante</span>(estudiantes[i]); }
+                    <span class="keyword">break</span>;
+            <span class="keyword">case</span> <span class="number">3</span>: { <span class="type">int</span> cod; cout &lt;&lt; <span class="string">"Código: "</span>; cin &gt;&gt; cod; <span class="type">int</span> pos = <span class="function">buscarPorCodigo</span>(estudiantes, cod);
+                    <span class="keyword">if</span> (pos != <span class="number">-1</span>) <span class="function">mostrarEstudiante</span>(estudiantes[pos]); <span class="keyword">else</span> cout &lt;&lt; <span class="string">"No encontrado."</span> &lt;&lt; endl; <span class="keyword">break</span>; }
+            <span class="keyword">case</span> <span class="number">4</span>: <span class="function">guardarEnArchivo</span>(estudiantes, archivo); cout &lt;&lt; <span class="string">"¡Hasta luego!"</span> &lt;&lt; endl; <span class="keyword">break</span>;
+        }
+    } <span class="keyword">while</span> (opcion != <span class="number">4</span>);
+    <span class="keyword">return</span> <span class="number">0</span>;
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Resumen y desafíos -->
+        <div class="slide" id="slide-20">
+            <div class="slide-content">
+                <h2>📋 Resumen + Desafíos opcionales</h2>
+
+                <div class="two-columns">
+                    <div>
+                        <div class="visual-box">
+                            <h3 style="color: var(--accent-lime);">✅ Lo que construimos:</h3>
+                            <ul>
+                                <li><strong>Struct</strong> Estudiante</li>
+                                <li><strong>Funciones:</strong> crear, mostrar, buscar</li>
+                                <li><strong>Vector</strong> dinámico de estudiantes</li>
+                                <li><strong>Menú</strong> interactivo con switch</li>
+                                <li><strong>Persistencia</strong> con archivos CSV</li>
+                                <li><strong>Integración</strong> cargar/guardar automático</li>
+                            </ul>
+                        </div>
+
+                        <div class="highlight-box success">
+                            <p>🎉 <strong>¡Felicidades!</strong> Has construido un sistema completo integrando todos los conceptos de la semana.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="challenge-box">
+                            <h4>🚀 Desafíos opcionales:</h4>
+                            <ol>
+                                <li><strong>Eliminar estudiante</strong> por código</li>
+                                <li><strong>Modificar</strong> datos de un estudiante</li>
+                                <li><strong>Ordenar</strong> por promedio o nombre</li>
+                                <li><strong>Calcular</strong> promedio general del curso</li>
+                                <li><strong>Filtrar</strong> estudiantes con promedio &gt; 4.0</li>
+                                <li><strong>Validar</strong> que el código no se repita</li>
+                            </ol>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 20px;">
+                            <p style="font-size: 3rem;">🎯✨💾</p>
+                            <p style="font-size: 1.2rem; color: var(--accent-lime);">¡Sistema completo!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 20;
+
+        document.getElementById('total').textContent = totalSlides;
+
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            document.getElementById(`slide-${n}`).classList.add('active');
+            document.getElementById('current').textContent = n;
+            
+            const progress = (n / totalSlides) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        showSlide(1);
+    </script>
+</body>
+</html>
